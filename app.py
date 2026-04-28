@@ -35,10 +35,63 @@ def trim_history():
 # Page Configuration
 # ──────────────────────────────────────────────
 st.set_page_config(
-    page_title="Hawaiian Dictionary",
-    page_icon="🌺",
+    page_title="Olii — Hawaiian Dictionary",
+    page_icon="🌿",
     layout="centered",
 )
+
+# ──────────────────────────────────────────────
+# Custom CSS
+# ──────────────────────────────────────────────
+st.markdown("""
+<style>
+    /* Chat input styling */
+    .stChatInput textarea::placeholder {
+        color: #8B7D6B;
+    }
+
+    /* Sidebar refinement */
+    [data-testid="stSidebar"] {
+        background-color: #F0EBE3;
+    }
+    [data-testid="stSidebar"] .stMarkdown p {
+        font-size: 0.92rem;
+        line-height: 1.6;
+        color: #4A4340;
+    }
+    [data-testid="stSidebar"] .stMarkdown h3 {
+        color: #1A7A6D;
+        font-weight: 600;
+    }
+
+    /* Header area */
+    .main-header {
+        text-align: center;
+        padding: 0.5rem 0 1rem 0;
+    }
+    .main-header h1 {
+        color: #1A7A6D;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0;
+    }
+    .main-header .subtitle {
+        color: #8B7D6B;
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Disclaimer block styling */
+    .stAlert {
+        border-radius: 8px;
+    }
+
+    /* Chat message refinement */
+    [data-testid="stChatMessage"] {
+        border-radius: 12px;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # ──────────────────────────────────────────────
 # Load Google Sheets Data (cached by TTL)
@@ -73,28 +126,62 @@ if not check_auth(PASSWORD):
 # ──────────────────────────────────────────────
 # Chat UI Header
 # ──────────────────────────────────────────────
-st.markdown(f"# 🌺 {APP_TITLE}")
-if APP_SUBTITLE:
-    st.caption(APP_SUBTITLE)
-else:
-    st.caption(f"Powered by {MODEL_NAME}")
+header_title = APP_TITLE if APP_TITLE != "Hawaiian-English Dictionary" else "Olii"
+st.markdown(f"""
+<div class="main-header">
+    <h1>🌿 {header_title}</h1>
+    <div class="subtitle">{APP_SUBTITLE or "Your cultural-linguistic guide to Hawaiian"}</div>
+</div>
+""", unsafe_allow_html=True)
 
 # ──────────────────────────────────────────────
 # Sidebar
 # ──────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("### About")
+    st.image("olii_logo.png", use_container_width=True)
+    st.markdown("")
+
+    st.markdown("### About Olii")
     st.markdown(
-        "This AI-powered dictionary helps you explore "
-        "Hawaiian words and their English meanings.\n\n"
-        "Type a **Hawaiian** or **English** word to get started."
+        "Language is more than just a communication tool — "
+        "it carries cultural identity, knowledge, and history. "
+        "**Olii** was born from the belief that technology can be "
+        "a guardian of culture, not a destroyer.\n\n"
+        "We are not a definitive dictionary or an ultimate authority. "
+        "Olii is a **patient, respectful guide**, supporting learners "
+        "in approaching ʻŌlelo Hawaiʻi with clarity, care, and "
+        "cultural awareness."
     )
     st.markdown("---")
+
+    st.markdown("### The Olii Guidelines")
     st.markdown(
-        "**Reference**: Based on the Pukui & Elbert "
-        "Hawaiian Dictionary tradition."
+        "**Context First** — Cultural and situational context "
+        "before direct translation.\n\n"
+        "**Supportive & Suggestive** — Corrections are offered gently, "
+        "never evaluatively.\n\n"
+        "**Built-in Humility** — For deeper learning and sacred chants, "
+        "users are directed to consult with human Kumu.\n\n"
+        "**Explicit Avoidance** — No aggressive tones, exclusionary "
+        "language, or authoritative voices."
     )
     st.markdown("---")
+
+    st.markdown("### Ethical Reference")
+    st.markdown(
+        "Grounded in the **UN Declaration on the Rights of Indigenous "
+        "Peoples** and **UNESCO AI Ethics Recommendations**.\n\n"
+        "Olii maintains strict standards of accuracy, avoids "
+        "unverified information, and clearly acknowledges "
+        "uncertainty when necessary."
+    )
+    st.markdown("---")
+
+    st.caption(
+        "Reference: Pukui & Elbert Hawaiian Dictionary tradition. "
+        "This tool is part of a high school anthropology project."
+    )
+    st.markdown("")
     if st.button("🗑️ Clear conversation", use_container_width=True):
         st.session_state.messages = []
         st.rerun()
@@ -112,7 +199,7 @@ for msg in st.session_state.messages:
 # ──────────────────────────────────────────────
 # Chat Input Processing
 # ──────────────────────────────────────────────
-if prompt := st.chat_input("Type a Hawaiian or English word..."):
+if prompt := st.chat_input("Ask Olii about a Hawaiian or English word..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
