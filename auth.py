@@ -21,7 +21,7 @@ def check_auth(correct_password: str) -> bool:
         st.session_state["authenticated"] = True
         return True
 
-    st.markdown("## 🔒 Hawaiian-English Dictionary")
+    st.markdown("## 🌿 Olii — Hawaiian Dictionary")
     st.markdown("Enter the access password to continue.")
 
     with st.form("login_form"):

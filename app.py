@@ -35,10 +35,63 @@ def trim_history():
 # Page Configuration
 # ──────────────────────────────────────────────
 st.set_page_config(
-    page_title="Hawaiian Dictionary",
-    page_icon="🌺",
+    page_title="Olii — Hawaiian Dictionary",
+    page_icon="🌿",
     layout="centered",
 )
+
+# ──────────────────────────────────────────────
+# Custom CSS
+# ──────────────────────────────────────────────
+st.markdown("""
+<style>
+    /* Chat input styling */
+    .stChatInput textarea::placeholder {
+        color: #8B7D6B;
+    }
+
+    /* Sidebar refinement */
+    [data-testid="stSidebar"] {
+        background-color: #F0EBE3;
+    }
+    [data-testid="stSidebar"] .stMarkdown p {
+        font-size: 0.92rem;
+        line-height: 1.6;
+        color: #4A4340;
+    }
+    [data-testid="stSidebar"] .stMarkdown h3 {
+        color: #1A7A6D;
+        font-weight: 600;
+    }
+
+    /* Header area */
+    .main-header {
+        text-align: center;
+        padding: 0.5rem 0 1rem 0;
+    }
+    .main-header h1 {
+        color: #1A7A6D;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0;
+    }
+    .main-header .subtitle {
+        color: #8B7D6B;
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Disclaimer block styling */
+    .stAlert {
+        border-radius: 8px;
+    }
+
+    /* Chat message refinement */
+    [data-testid="stChatMessage"] {
+        border-radius: 12px;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # ──────────────────────────────────────────────
 # Load Google Sheets Data (cached by TTL)
@@ -73,28 +126,44 @@ if not check_auth(PASSWORD):
 # ──────────────────────────────────────────────
 # Chat UI Header
 # ──────────────────────────────────────────────
-st.markdown(f"# 🌺 {APP_TITLE}")
-if APP_SUBTITLE:
-    st.caption(APP_SUBTITLE)
-else:
-    st.caption(f"Powered by {MODEL_NAME}")
+header_title = APP_TITLE if APP_TITLE != "Hawaiian-English Dictionary" else "Olii"
+st.markdown(f"""
+<div class="main-header">
+    <h1>🌿 {header_title}</h1>
+    <div class="subtitle">{APP_SUBTITLE or "Your cultural-linguistic guide to Hawaiian"}</div>
+</div>
+""", unsafe_allow_html=True)
 
 # ──────────────────────────────────────────────
 # Sidebar
 # ──────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("### About")
+    st.markdown("### 🌿 Olii")
     st.markdown(
-        "This AI-powered dictionary helps you explore "
-        "Hawaiian words and their English meanings.\n\n"
-        "Type a **Hawaiian** or **English** word to get started."
+        "A calm, patient guide to the Hawaiian language. "
+        "Olii bridges learners and Hawaiian culture, "
+        "prioritizing cultural integrity and accuracy."
     )
     st.markdown("---")
+    st.markdown("### How to Use")
     st.markdown(
-        "**Reference**: Based on the Pukui & Elbert "
-        "Hawaiian Dictionary tradition."
+        "Type a **Hawaiian** word to see its English meaning, "
+        "pronunciation, and cultural context. "
+        "You can also type in **English** to find the Hawaiian equivalent."
     )
     st.markdown("---")
+    st.markdown("### Cultural Note")
+    st.markdown(
+        "Hawaiian is a living language with deep cultural roots. "
+        "For sacred or restricted knowledge, Olii will guide you "
+        "to consult with a Kumu (teacher) or community elder."
+    )
+    st.markdown("---")
+    st.caption(
+        "Reference: Pukui & Elbert Hawaiian Dictionary tradition. "
+        "This tool is part of a high school anthropology project."
+    )
+    st.markdown("")
     if st.button("🗑️ Clear conversation", use_container_width=True):
         st.session_state.messages = []
         st.rerun()
@@ -112,7 +181,7 @@ for msg in st.session_state.messages:
 # ──────────────────────────────────────────────
 # Chat Input Processing
 # ──────────────────────────────────────────────
-if prompt := st.chat_input("Type a Hawaiian or English word..."):
+if prompt := st.chat_input("Ask Olii about a Hawaiian or English word..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
